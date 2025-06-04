@@ -2,9 +2,14 @@
 
 A simple Windows tool that watches a folder for new `.jxr` images and converts them to `.jpg` using the open-source **jxr2jpg** utility. Color profiles are preserved automatically.
 
+
+> **Note**
+> The previously linked `jxr2jpg` project is no longer available on GitHub. A convenient alternative is the [jxr_to_png](https://github.com/ledoge/jxr_to_png) tool which can decode JPEG&nbsp;XR files. You can convert `.jxr` to `.png` with it and then to `.jpg` using any standard converter.
+
 ## Requirements
 
-- `jxr2jpg.exe` – download it from [the jxr2jpg GitHub project](https://github.com/jxr-tools/jxr2jpg) and place it next to the app or somewhere in your `PATH`.
+- `jxr2jpg.exe` – if you still have a copy of the original tool place it next to the app or somewhere in your `PATH`. Otherwise download the [jxr_to_png](https://github.com/ledoge/jxr_to_png) release and rename the executable to `jxr2jpg.exe`.
+
 - Python 3.12 when running from source (not needed for the built exe).
 
 ## Setup
@@ -30,7 +35,8 @@ If the source image contains HDR data that JPEG cannot store, a warning is logge
 
 ## Troubleshooting
 
-- **Missing `jxr2jpg.exe`** – The app will show a popup if the converter is not found. Download it from the link above and place it next to the `.exe`.
+- **Missing `jxr2jpg.exe`** – The app will show a popup if the converter is not found. Download `jxr_to_png` from GitHub and rename the binary to `jxr2jpg.exe` before placing it next to the `.exe`.
+
 - **Multiple watchers** – The app prevents starting a second watcher while one is already running.
 
 ## PyInstaller Command

@@ -132,9 +132,11 @@ class App:
             messagebox.showerror(
                 "jxr2jpg.exe not found",
                 (
-                    "jxr2jpg.exe is missing. Download it from "
-                    "https://github.com/jxr-tools/jxr2jpg and place it in the app "
-                    "folder or in your PATH."
+
+                    "jxr2jpg.exe is missing. Download the jxr_to_png release from "
+                    "https://github.com/ledoge/jxr_to_png, rename the executable to "
+                    "jxr2jpg.exe and place it in the app folder or in your PATH."
+
                 ),
             )
             return
