@@ -11,7 +11,7 @@ Rules are **rank‑ordered by priority**: if a more specific document (`CONTRIBU
 
 | Key                   | Description                                                                                                                        |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| **Mission**           | Provide a minimal Gemini-powered Telegram bot for chat interactions. |                                                                   
+| **Mission**           | Create a simple Windows .exe app in Python (with GUI) to automatically convert .jxr images to .jpg in a watched folder. |                                                                   
 | **Primary Languages** | Detected automatically. Use this *fallback preference* when creating new files: **Python > TypeScript > Go > Rust > Java > Shell** |
 | **Execution Model**   | Library modules **preferred** → short‑lived CLIs → long‑running services.                                                          |
 | **Online Components** | Anything that must stay online (bot, API, worker) **MUST** ship with a minimal **Docker/OCI** spec.                                |
