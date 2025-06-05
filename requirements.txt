@@ -1,3 +1,4 @@
 watchdog
 Pillow
-pillow-heif
+imagecodecs
+numpy
