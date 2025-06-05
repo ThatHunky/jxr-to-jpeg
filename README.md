@@ -1,16 +1,16 @@
-# JXR to JPEG Converter
+# JXR to HEIC Converter
 
-A simple Windows tool that watches a folder for new `.jxr` images and converts them to `.jpg` using the open-source **jxr2jpg** utility. Color profiles are preserved automatically.
+A simple Windows tool that watches a folder for new `.jxr` images and converts them to `.heic`. It relies on the open-source **jxr2jpg** utility to decode JPEG XR files and the `pillow-heif` library to encode HEIC. Color profiles and HDR data are preserved automatically.
 
 
 > **Note**
-> The previously linked `jxr2jpg` project is no longer available on GitHub. A convenient alternative is the [jxr_to_png](https://github.com/ledoge/jxr_to_png) tool which can decode JPEG&nbsp;XR files. You can convert `.jxr` to `.png` with it and then to `.jpg` using any standard converter.
+> The previously linked `jxr2jpg` project is no longer available on GitHub. A convenient alternative is the [jxr_to_png](https://github.com/ledoge/jxr_to_png) tool which can decode JPEG XR files. You can convert `.jxr` to `.png` with it and then to `.heic` using the app.
 
 ## Requirements
 
 - `jxr2jpg.exe` – if you still have a copy of the original tool place it next to the app or somewhere in your `PATH`. Otherwise download the [jxr_to_png](https://github.com/ledoge/jxr_to_png) release and rename the executable to `jxr2jpg.exe`.
-
 - Python 3.12 when running from source (not needed for the built exe).
+- Python packages: `watchdog`, `Pillow`, `pillow-heif` (installed automatically via `install_deps.bat`).
 
 ## Setup
 
@@ -21,16 +21,16 @@ A simple Windows tool that watches a folder for new `.jxr` images and converts t
 ## Usage
 
 1. Open the app and select the input and output folders.
-2. Click **Start Service**. The app watches the input folder and converts any new `.jxr` files.
+2. Click **Start Service**. The app converts any existing `.jxr` files in the input folder and then watches for new ones.
 3. Logs appear in the window and are also written to `conversion.log` inside the output folder.
 
-If the source image contains HDR data that JPEG cannot store, a warning is logged but the color profile is kept.
+HDR information is preserved in the generated `.heic` images.
 
 ### Example `conversion.log`
 
 ```
-2025-06-04 12:00:00,000 - INFO - Converted sample.jxr -> sample.jpg
-2025-06-04 12:00:05,000 - WARNING - HDR info detected in hdr_image.jxr; JPEG output will be SDR
+2025-06-04 12:00:00,000 - INFO - Converted sample.jxr -> sample.heic
+2025-06-04 12:00:05,000 - INFO - Converted hdr_image.jxr -> hdr_image.heic
 ```
 
 ## Troubleshooting

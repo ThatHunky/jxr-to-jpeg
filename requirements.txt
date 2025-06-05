@@ -1,1 +1,3 @@
 watchdog
+Pillow
+pillow-heif
