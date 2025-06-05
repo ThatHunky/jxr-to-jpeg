@@ -13,6 +13,7 @@ A simple Windows tool that watches a folder for new `.jxr` images and converts t
 1. Double-click `install_deps.bat` to install Python packages.
 2. (Optional) Run `run_app.bat` to launch the app directly from source.
 3. To build a standalone executable, run `build_app.bat`. The final `converter_app.exe` will be in the `dist` folder.
+4. (Optional) Use `--hdr-p3` with `jxr_to_jpeg.py` to embed the HDR P3 profile.
 
 ## Usage
 1. Open the app and select the input and output folders.

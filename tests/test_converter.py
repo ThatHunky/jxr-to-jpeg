@@ -24,3 +24,16 @@ def test_convert_roundtrip(tmp_path: Path) -> None:
     assert img.size == (5, 5)
     r, g, b = img.getpixel((0, 0))
     assert r > g and r > b
+
+
+def test_icc_profile(tmp_path: Path) -> None:
+    data = np.zeros((2, 2, 3), dtype=np.uint8)
+    jxr_bytes = imagecodecs.jpegxr_encode(data)
+    src = tmp_path / "sample.jxr"
+    dst = tmp_path / "result.jpg"
+    src.write_bytes(jxr_bytes)
+
+    profile = Path(__file__).resolve().parents[1] / "hdr_p3.icc"
+    convert_jxr_to_jpeg(src, dst, icc_profile=profile)
+    img = Image.open(dst)
+    assert "icc_profile" in img.info
