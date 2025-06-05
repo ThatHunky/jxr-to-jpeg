@@ -2,6 +2,7 @@ import os
 import queue
 import shutil
 import subprocess
+import tempfile
 import threading
 import time
 from pathlib import Path
@@ -19,10 +20,12 @@ from tkinter import (
 
 from watchdog.events import PatternMatchingEventHandler
 from watchdog.observers import Observer
+from PIL import Image
+import pillow_heif
 
 
 class ConverterHandler(PatternMatchingEventHandler):
-    """Handle new JXR files and convert them to JPEG."""
+    """Handle new JXR files and convert them to HEIC."""
 
     def __init__(
         self, input_dir: str, output_dir: str, exe: str, q: queue.Queue, logger
@@ -42,20 +45,26 @@ class ConverterHandler(PatternMatchingEventHandler):
 
     def _convert(self, src: str) -> None:
         name = os.path.basename(src)
-        out_name = os.path.splitext(name)[0] + ".jpg"
+        out_name = os.path.splitext(name)[0] + ".heic"
         out_path = os.path.join(self.output_dir, out_name)
-        cmd = [self.exe, src, out_path]
-        result = subprocess.run(cmd, capture_output=True, text=True)
-        if result.returncode == 0:
+
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_png = os.path.join(tmp, "temp.png")
+            cmd = [self.exe, src, tmp_png]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+                msg = f"Failed to convert {name}: {result.stderr.strip()}"
+                self.logger.error(msg)
+                self.queue.put(msg)
+                return
+
+            pillow_heif.register_heif_opener()
+            img = Image.open(tmp_png)
+            img.save(out_path, format="HEIC")
             msg = f"Converted {name} -> {out_name}"
             if "HDR" in result.stdout:
-                warn = f"HDR info detected in {name}; JPEG output will be SDR"
-                self.logger.warning(warn)
-                msg += f"\nWARNING: {warn}"
-            self.logger.info(msg)
-        else:
-            msg = f"Failed to convert {name}: {result.stderr.strip()}"
-            self.logger.error(msg)
+                self.logger.info(f"HDR info preserved in {out_name}")
+        self.logger.info(msg)
         self.queue.put(msg)
 
 
@@ -74,7 +83,7 @@ def setup_logger(log_file: Path):
 class App:
     def __init__(self, root: Tk) -> None:
         self.root = root
-        root.title("JXR to JPEG Converter")
+        root.title("JXR to HEIC Converter")
 
         self.input_var = Entry(root, width=50)
         self.output_var = Entry(root, width=50)
@@ -132,11 +141,9 @@ class App:
             messagebox.showerror(
                 "jxr2jpg.exe not found",
                 (
-
                     "jxr2jpg.exe is missing. Download the jxr_to_png release from "
                     "https://github.com/ledoge/jxr_to_png, rename the executable to "
                     "jxr2jpg.exe and place it in the app folder or in your PATH."
-
                 ),
             )
             return
@@ -146,14 +153,19 @@ class App:
         self.logger = setup_logger(log_file)
         self.queue = queue.Queue()
 
+        handler = ConverterHandler(input_dir, output_dir, exe, self.queue, self.logger)
+        for file in Path(input_dir).glob("*.jxr"):
+            handler._convert(str(file))
+        for file in Path(input_dir).glob("*.JXR"):
+            handler._convert(str(file))
+
         self.watch_thread = threading.Thread(
-            target=self.watch, args=(input_dir, output_dir, exe), daemon=True
+            target=self.watch, args=(input_dir, handler), daemon=True
         )
         self.watch_thread.start()
         self.log("Watching for .jxr files in " + input_dir)
 
-    def watch(self, input_dir: str, output_dir: str, exe: str) -> None:
-        handler = ConverterHandler(input_dir, output_dir, exe, self.queue, self.logger)
+    def watch(self, input_dir: str, handler: ConverterHandler) -> None:
         observer = Observer()
         observer.schedule(handler, input_dir, recursive=False)
         observer.start()
