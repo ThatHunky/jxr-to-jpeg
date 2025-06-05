@@ -1,0 +1,16 @@
+[project]
+name = "jxr-to-jpeg"
+version = "0.1.0"
+description = "Convert JXR images to JPEG with a simple GUI"
+requires-python = ">=3.12"
+dependencies = [
+    "watchdog",
+    "Pillow",
+    "imagecodecs",
+    "numpy",
+    "pystray",
+]
+
+[build-system]
+requires = ["uv>=0.1.36"]
+build-backend = "uv.build"
